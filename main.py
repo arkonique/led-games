@@ -24,14 +24,29 @@ circle_radius = 15
 margin = 5
 grid_width, grid_height = 10, 20
 
+## Pygame definitions
+
+# Calculate grid size
+grid_total_width = grid_width * (circle_radius * 2 + margin) - margin
+grid_total_height = grid_height * (circle_radius * 2 + margin) - margin
+
+# Calculate offsets to center the grid
+x_offset = (width - grid_total_width) // 2
+y_offset = (height - grid_total_height) // 2
+
+def draw_circle(surface, color, center, radius):
+    pygame.draw.circle(surface, color, center, radius)
+
+
+
 # Create the GRID array
 GRID = np.zeros((20, 10), dtype=int)
 
+#======================== Game classes ========================#
+#----------------------------- Pong -----------------------------#
 # pong variables
 dir = "stay"
 player = 0
-
-# Pong
 
 class Pong:
     def __init__(self, ball=(9,4), p1_pad=3, p2_pad=3, speed=(1,1), p1_score=0, p2_score=0,winner = 0,win_score = 11):
@@ -161,62 +176,49 @@ class Pong:
         self.ai_move()
         return self.draw_grid()
 
-## Pygame definitions
 
-# Calculate grid size
-grid_total_width = grid_width * (circle_radius * 2 + margin) - margin
-grid_total_height = grid_height * (circle_radius * 2 + margin) - margin
-
-# Calculate offsets to center the grid
-x_offset = (width - grid_total_width) // 2
-y_offset = (height - grid_total_height) // 2
-
-def draw_circle(surface, color, center, radius):
-    pygame.draw.circle(surface, color, center, radius)
-
-
-
-pong = Pong()
-win = pong.check_score() != 0
-
-while not win:    
-    
-    GRID = pong.game_loop()
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    screen.fill(black)
-
-    for row in range(grid_height):
-        for col in range(grid_width):
-            x = col * (circle_radius * 2 + margin) + circle_radius + margin + x_offset
-            y = row * (circle_radius * 2 + margin) + circle_radius + margin + y_offset
-            color = red if GRID[row][col] == 1 else grey
-            draw_circle(screen, color, (x, y), circle_radius)
-
-    # Display the numbers at the bottom of the screen
-    font = pygame.font.Font(None, 36)
-
-    if pong.check_score():
-        winner_text = font.render(f"Player {pong.check_winner()} wins!", True, red)
-        winner_rect = winner_text.get_rect(center=(width // 2, height - 30))
-        screen.blit(winner_text, winner_rect)
-    else:
-        text = font.render(f"{pong.p1_score}:{pong.p2_score}", True, red)
-        text_rect = text.get_rect(center=(width // 2, height - 30))
-        screen.blit(text, text_rect)
-
-    pygame.display.flip()
-
-    time.sleep(0.1)
+if __name__ == "__main__":
+    pong = Pong()
     win = pong.check_score() != 0
 
+    while not win:    
+        
+        GRID = pong.game_loop()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        screen.fill(black)
+
+        for row in range(grid_height):
+            for col in range(grid_width):
+                x = col * (circle_radius * 2 + margin) + circle_radius + margin + x_offset
+                y = row * (circle_radius * 2 + margin) + circle_radius + margin + y_offset
+                color = red if GRID[row][col] == 1 else grey
+                draw_circle(screen, color, (x, y), circle_radius)
+
+        # Display the numbers at the bottom of the screen
+        font = pygame.font.Font(None, 36)
+
+        if pong.check_score():
+            winner_text = font.render(f"Player {pong.check_winner()} wins!", True, red)
+            winner_rect = winner_text.get_rect(center=(width // 2, height - 30))
+            screen.blit(winner_text, winner_rect)
+        else:
+            text = font.render(f"{pong.p1_score}:{pong.p2_score}", True, red)
+            text_rect = text.get_rect(center=(width // 2, height - 30))
+            screen.blit(text, text_rect)
+
+        pygame.display.flip()
+
+        time.sleep(0.1)
+        win = pong.check_score() != 0
 
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
