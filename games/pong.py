@@ -1,8 +1,10 @@
 import numpy as np
 import keyboard
+from random import randint
 
 class Pong:
-    def __init__(self, ball=(9,4), p1_pad=3, p2_pad=3, speed=(1,1), p1_score=0, p2_score=0,winner = 0,win_score = 11):
+    def __init__(self, grid= np.zeros((20, 10), dtype=int),ball=(9,4), p1_pad=3, p2_pad=3, speed=(1,1), p1_score=0, p2_score=0,winner = 0,win_score = 11):
+        self.grid = grid
         self.ball = ball
         self.p1_pad = p1_pad
         self.p2_pad = p2_pad
@@ -15,9 +17,11 @@ class Pong:
     def draw_grid(self):
         grid = np.zeros((20, 10), dtype=int)
         # grid in format a[y coordinate,x coordinate]
-        grid[self.ball] = 1
+        grid[self.ball] = 2
         grid[18,self.p1_pad:self.p1_pad+4] = 1
         grid[1,self.p2_pad:self.p2_pad+4] = 1
+
+        self.grid = grid
         return grid
     
     def move_ball(self):
@@ -26,7 +30,7 @@ class Pong:
         ball = (ball[0]+speed[0], ball[1]+speed[1])
         self.ball = ball
 
-        if ball[0] == 0 or ball[0] == 19:
+        if ball[0] <= 0 or ball[0] >= 19:
             if ball[0] == 0:
                 self.p1_score += 1
             else:
@@ -37,7 +41,7 @@ class Pong:
             self.ball = ball
             
 
-        if ball[1] == 0 or ball[1] == 9:
+        if ball[1] <= 0 or ball[1] >= 9:
             speed = (speed[0], speed[1]*-1)
             self.speed = speed
 
@@ -100,15 +104,20 @@ class Pong:
         return self.ball, self.p1_pad, self.p2_pad, self.speed, self.p1_score, self.p2_score, self.winner
     
     def ai_move(self):
-        if self.ball[1] < 4:
-            if self.ball[0] > 10:
-                self.move_paddle(2, "right")
-            elif self.ball[0] < 10:
-                self.move_paddle(2, "left")
-        return self.p2_pad
-    
+        # if ball is in top half try to match the ball's x coordinate with a 40% chance of moving in the opposite direction. If in the bottom half, don't move
+        if self.ball[0] < 10:
+            if randint(1,10) < 9:
+                if self.ball[1] < self.p2_pad:
+                    self.move_paddle(2, "left")
+                elif self.ball[1] > self.p2_pad:
+                    self.move_paddle(2, "right")
+            else:
+                if self.ball[1] < self.p2_pad:
+                    self.move_paddle(2, "right")
+                elif self.ball[1] > self.p2_pad:
+                    self.move_paddle(2, "left")
+
     def game_loop(self):
-        
         self.move_ball()
         if keyboard.is_pressed('left'):
             dir = "left"
