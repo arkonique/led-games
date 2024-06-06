@@ -1,6 +1,6 @@
 import numpy as np
 import keyboard
-from random import randint
+import time
 
 class Pong:
     def __init__(self, grid= np.zeros((20, 10), dtype=int),ball=(9,4), p1_pad=3, p2_pad=3, speed=(1,1), p1_score=0, p2_score=0,winner = 0,win_score = 11):
@@ -33,8 +33,10 @@ class Pong:
         if ball[0] <= 0 or ball[0] >= 19:
             if ball[0] == 0:
                 self.p1_score += 1
+                time.sleep(0.5)
             else:
                 self.p2_score += 1
+                time.sleep(0.5)
             speed = (speed[0]*-1, speed[1])
             self.speed = speed
             ball = (9,4)
@@ -106,7 +108,7 @@ class Pong:
     def ai_move(self):
         # if ball is in top half try to match the ball's x coordinate with a 40% chance of moving in the opposite direction. If in the bottom half, don't move
         if self.ball[0] < 10:
-            if randint(1,10) < 9:
+            if np.random.randint(1,10) < 9:
                 if self.ball[1] < self.p2_pad:
                     self.move_paddle(2, "left")
                 elif self.ball[1] > self.p2_pad:
