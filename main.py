@@ -1,7 +1,9 @@
 import numpy as np
 import time
 import sys
-import pygame
+import contextlib
+with contextlib.redirect_stdout(None):
+    import pygame
 from games.pong import Pong
 from games.snake import Snake
 from games.breakout import Breakout
