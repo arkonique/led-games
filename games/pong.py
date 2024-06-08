@@ -121,10 +121,10 @@ class Pong:
 
     def game_loop(self):
         self.move_ball()
-        if keyboard.is_pressed('left'):
+        if keyboard.is_pressed('left') or keyboard.is_pressed('up'):
             dir = "left"
             player = 1
-        elif keyboard.is_pressed('right'):
+        elif keyboard.is_pressed('right') or keyboard.is_pressed('down'):
             dir = "right"
             player = 1
         elif keyboard.is_pressed('a'):

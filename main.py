@@ -4,6 +4,7 @@ import sys
 import pygame
 from games.pong import Pong
 from games.snake import Snake
+from games.breakout import Breakout
 
 # Initialize pygame
 pygame.init()
@@ -109,6 +110,22 @@ if __name__ == "__main__":
             time.sleep(0.15)
             pygame.display.flip()
 
+    elif sys.argv[1] == "breakout":
+        breakout = Breakout()
+        while not breakout.game_over:
+            GRID = breakout.game_loop()
+            pygame_single_iteration(GRID)
+            # Display the score and level at the bottom of the screen
+            font = pygame.font.Font(None, 36)
+            if breakout.game_over:
+                text = font.render(f"Game Over! Score: {breakout.score} Level: {breakout.level}", True, red)
+            else:
+                text = font.render(f"Score: {breakout.score} Level: {breakout.level}", True, red)
+            text_rect = text.get_rect(center=(width // 2, height - 30))
+            screen.blit(text, text_rect)
+
+            time.sleep(0.1)
+            pygame.display.flip()
 
 
     while True:
